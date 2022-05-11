@@ -85,8 +85,8 @@ class MainActivity : AppCompatActivity() {
     binding = ActivityMainBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    // Your code
-    networkMonitor = NetworkMonitor(this)
+    networkMonitor = NetworkMonitor(this, lifecycle)
+    lifecycle.addObserver(networkMonitor)
 
     viewModel.recipeState.observe(this, Observer {
       when (it) {
@@ -96,24 +96,10 @@ class MainActivity : AppCompatActivity() {
 
     })
     viewModel.getRandomRecipe()
-    // 1.Network Monitor initialization.
-    networkMonitor.init()
 
     networkMonitor.networkAvailableStateFlow.asLiveData().observe(this, Observer { networkState ->
       handleNetworkState(networkState)
     })
-  }
-
-  // 2. Register network callback.
-  override fun onStart() {
-    super.onStart()
-    networkMonitor.registerNetworkCallback()
-  }
-
-  // 3. Unregister network callback.
-  override fun onStop() {
-    super.onStop()
-    networkMonitor.unregisterNetworkCallback()
   }
 
   override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
