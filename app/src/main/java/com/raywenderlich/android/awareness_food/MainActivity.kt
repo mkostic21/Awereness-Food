@@ -100,6 +100,9 @@ class MainActivity : AppCompatActivity() {
     networkMonitor.networkAvailableStateFlow.asLiveData().observe(this, Observer { networkState ->
       handleNetworkState(networkState)
     })
+    unavailableConnectionLifecycleOwner.addObserver(networkObserver)
+
+
   }
 
   override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
@@ -173,9 +176,11 @@ class MainActivity : AppCompatActivity() {
 
   private fun handleNetworkState(networkState: NetworkState?) {
     when (networkState) {
-      NetworkState.Unavailable -> showNetworkUnavailableAlert(R.string.network_is_unavailable)
+      NetworkState.Unavailable -> unavailableConnectionLifecycleOwner.onConnectionLost()
+      NetworkState.Available -> unavailableConnectionLifecycleOwner.onConnectionAvailable()
     }
   }
+
 
   private fun removeNetworkUnavailableAlert() {
     snackbar?.dismiss()
