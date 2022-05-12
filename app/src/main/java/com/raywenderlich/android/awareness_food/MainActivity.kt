@@ -102,6 +102,10 @@ class MainActivity : AppCompatActivity() {
     })
     unavailableConnectionLifecycleOwner.addObserver(networkObserver)
 
+    viewModel.loadingState.observe(this, Observer { uiLoadingState ->
+      handleLoadingState(uiLoadingState)
+    })
+
 
   }
 

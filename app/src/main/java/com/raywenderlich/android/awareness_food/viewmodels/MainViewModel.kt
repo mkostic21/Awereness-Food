@@ -47,6 +47,11 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository
 ) : ViewModel() {
+  private val _loadingState = MutableLiveData<UiLoadingState>()
+  val loadingState: LiveData<UiLoadingState>
+    get() {
+      return _loadingState
+    }
 
   private val _recipeState = MutableLiveData<RecipeApiState>()
   val recipeState: LiveData<RecipeApiState>
@@ -55,10 +60,13 @@ class MainViewModel @Inject constructor(
     }
 
   fun getRandomRecipe() {
+    _loadingState.value = UiLoadingState.Loading
     viewModelScope.launch {
       recipeRepository.getRandomRecipe().collect { result ->
+        _loadingState.value = UiLoadingState.NotLoading
         _recipeState.value = result
       }
     }
   }
+
 }
